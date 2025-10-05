@@ -9,20 +9,19 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 
 function Button({ children, text, value, onPress, className, kind, ...rest }: ButtonProps) {
     return (
-        <button className={
-            clsx("rounded-2xl text-2xl",
-                "hover:shadow-lg ",
-                "transition-all duration-300",
-                "shadow-sm",
-                kind === "digit" && "bg-neutral-800 hover:bg-neutral-700 shadow-2xl text-neutral-50 hover:shadow-2xl focus:rounded-4xl",
-                kind === "period" && "bg-gray-600/95 text-neutral-50",
-                kind === "clear" && "bg-red-500 text-neutral-50 text-xl font-bold",
-                kind === "evalutate" && " bg-green-400 hover:bg-green-500 text-neutral-950 hover:text-neutral-50",
-                kind === "operator" && " bg-orange-400/80 text-neutral-700 text-xl font-bold",
-                kind === "operator-alternative" && "bg-neutral-400 text-neutral-700 text-xl font-bold",
+        <button
+            className={clsx(
+                "rounded-2xl text-2xl font-semibold transition-all duration-200",
+                "shadow-sm hover:shadow-md focus-visible:outline focus-visible:outline-2",
+                "focus-visible:outline-blue-500 focus-visible:outline-offset-2",
+                kind === "digit" && "bg-neutral-900 text-neutral-50 hover:bg-neutral-800",
+                kind === "period" && "bg-neutral-700 text-neutral-50 hover:bg-neutral-600",
+                kind === "clear" && "bg-red-500 text-neutral-50 hover:bg-red-600",
+                kind === "evalutate" && "bg-emerald-400 text-neutral-900 hover:bg-emerald-500",
+                kind === "operator" && "bg-amber-400/90 text-neutral-800 hover:bg-amber-400",
+                kind === "operator-alternative" && "bg-neutral-300 text-neutral-700 hover:bg-neutral-200",
                 className
-            )
-        }
+            )}
             onClick={() => {
                 onPress(text)
             }}
