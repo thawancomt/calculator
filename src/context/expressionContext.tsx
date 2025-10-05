@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { addHistory, getHistory, type HistoryItem } from "../utils/localStorage"
-import { evaluate, log } from "mathjs"
+import { evaluate } from "mathjs"
 
 interface CalculatorContextValue {
     expression: string
@@ -76,8 +76,6 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
 
         
         const last = expressionRef.current.charAt(expressionRef.current.length - 1)
-
-        console.log(last, expressionRef);
         
 
         if (expressionRef.current === "" && value !== "-") return;

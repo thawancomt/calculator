@@ -1,24 +1,27 @@
 import clsx from "clsx";
 import { useCalculator } from "../context/expressionContext";
 
-interface DisplayProps extends React.ComponentProps<"input"> {
-}
-
-
+interface DisplayProps extends React.ComponentProps<"header"> {}
 
 export default function Display({ className, ...rest }: DisplayProps) {
-
-    const { expression } = useCalculator()
+    const { expression } = useCalculator();
 
     return (
-        <div placeholder="0" className={clsx(
-            "flex justify-end-safe pr-2 text-5xl text-neutral-50  items-center px-10 overflow-x-auto", className
-        )} {...rest}
-
-            aria-label="actual calculation expression to be calculated"
+        <header
+            className={clsx(
+                "flex min-h-[8rem] items-center justify-end overflow-x-auto px-8 py-6",
+                "text-5xl text-neutral-50",
+                className
+            )}
+            {...rest}
         >
-
-            <p className="text-nowrap" aria-label="expression on display">{expression ? expression : "0"}</p>
-        </div>
-    )
+            <output
+                aria-live="polite"
+                aria-atomic="true"
+                className="text-nowrap font-mono tracking-tight"
+            >
+                {expression ? expression : "0"}
+            </output>
+        </header>
+    );
 }

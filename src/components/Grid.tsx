@@ -8,19 +8,15 @@ export default function CalculatorGrid() {
     return (
         <section
             aria-labelledby="calc-keypad-title"
-            className="m-4 grow min-h-fit "
+            className="flex grow flex-col min-h-0  rounded-2xl border border-neutral-300/50 bg-neutral-200/80  shadow-lg "
         >
-            {/* Cabeçalho só para SR (leitores de tela) */}
-            <h2 id="calc-keypad-title" className="sr-only">
-                Teclado da calculadora
-            </h2>
 
             <div
                 role="group"
                 aria-label="Calculation keyboard"
                 className={clsx(
-                    "grid grid-cols-4 grow p-4 gap-2 bg-neutral-300 rounded-2xl h-full",
-                    "shadow-lg inset-shadow-2xs border border-neutral-600/15"
+                    "grid grow grid-cols-4 gap-2 rounded-2xl bg-neutral-300 p-4",
+                    "shadow-inner shadow-neutral-300"
                 )}
             >
                 <Button

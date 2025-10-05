@@ -1,9 +1,9 @@
 import clsx from "clsx";
-import { ArrowUpFromLine, Calculator, ChevronDown } from "lucide-react";
+import { Calculator } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCalculator } from "../context/expressionContext";
 
-interface HistoryProps extends React.ComponentProps<"section"> { }
+interface HistoryProps extends React.ComponentProps<"aside"> { }
 
 export default function History({ className, ...rest }: HistoryProps) {
     const { history, setExpression } = useCalculator();
@@ -11,57 +11,62 @@ export default function History({ className, ...rest }: HistoryProps) {
 
     const listId = "history-list";
 
-    function toggleHistory() {
-        setIsOpen((v) => !v);
-    }
-
     const items = useMemo(
         () =>
             history.map((it) => ({
                 ...it,
-                key: `${it.expression}=${it.result}`, // idealmente use um id único real
+                key: `${it.expression}=${it.result}`,
             })),
         [history]
     );
 
     return (
-        <section
+        <aside
             aria-labelledby="history-title"
             className={clsx(
-                "flex flex-col items-end  m-4 p-2  bg-neutral-300 rounded-xl ",
+                "flex flex-col max-h-4/12   rounded-2xl border border-neutral-300/50 bg-neutral-200/80 p-4",
+                "shadow-lg ",
                 className
             )}
             {...rest}
         >
+            <div className="flex items-center justify-between gap-4">
+                <h2 id="history-title" className="text-lg font-semibold text-neutral-700">
+                    History
+                </h2>
+                <button onClick={() => setIsOpen((v) => !v)} className="rounded-full bg-neutral-300/80 p-2 text-neutral-600">
+
+                    <Calculator className="h-5 w-5" />
+                </button>
+            </div>
+            {/* 
             <button
                 type="button"
-                onClick={toggleHistory}
+                
                 className={clsx(
-                    "shadow-md bg-white px-4 py-3 flex items-center gap-2 rounded-2xl",
-                    "hover:shadow-lg transition-shadow font-semibold text-neutral-700",
-                    "border border-neutral-300/30 w-fit justify-center",
+                    "flex w-full items-center justify-between rounded-xl border border-neutral-300/60",
+                    "bg-white px-4 py-2 text-left text-sm font-medium text-neutral-700 shadow-sm",
+                    "transition-colors hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2",
+                    "focus-visible:outline-blue-500 focus-visible:outline-offset-2"
                 )}
                 aria-expanded={isOpen}
                 aria-controls={listId}
             >
-                History
-                <Calculator className="h-5 text-yellow-600" aria-hidden="true" />
-            </button>
-
+                <span>{isOpen ? "Hide history" : "Show history"}</span>
+                <span aria-hidden="true">{isOpen ? "−" : "+"}</span>
+            </button> */}
 
             <ul
                 id={listId}
-
                 className={clsx(
-                    "w-0 h-0 m-0 p-0 overflow-hidden flex flex-col items-stretch gap-2 rounded-2xl",
-                    "transition-all duration-300 ease-in-out shadow-2xl inset-shadow-sm  bg-neutral-200",
-                    "inset-shadow-sm",
-                    isOpen && "w-full h-full grow  overflow-y-scroll mt-2 p-2"
+                    "w-0 h-0 flex flex-col gap-2 overflow-hidden rounded-xl bg-neutral-100 p-0 inset-shadow-sm",
+                    "transition-all duration-300 ease-in-out",
+                    isOpen && "w-full h-full overflow-y-scroll  p-2 mt-2"
                 )}
                 aria-label="Lista de expressões salvas"
             >
                 {items.length === 0 ? (
-                    <li className="text-neutral-600 text-sm px-2 py-2">Sem histórico ainda</li>
+                    <li className="px-2 py-2 text-sm text-neutral-600">Sem histórico ainda</li>
                 ) : (
                     items.map((item) => (
                         <li key={item.key}>
@@ -69,20 +74,20 @@ export default function History({ className, ...rest }: HistoryProps) {
                                 type="button"
                                 onClick={() => setExpression(item.expression)}
                                 className={clsx(
-                                    "w-full bg-white rounded-2xl shadow-sm",
-                                    "flex items-center justify-between gap-3",
-                                    "hover:shadow-md transition-shadow cursor-pointer",
-                                    "border border-neutral-300/30 hover:bg-neutral-100",
-                                    "px-3 py-2 text-left",
-                                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
+                                    "flex w-full items-center justify-between gap-3 rounded-xl border border-neutral-200",
+                                    "bg-white px-3 py-2 text-left shadow-sm transition-colors",
+                                    "hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2",
+                                    "focus-visible:outline-blue-500 focus-visible:outline-offset-2"
                                 )}
                                 title={`Usar “${item.expression}”`}
                             >
-                                <span className="text-neutral-600 font-medium px-2 text-xs truncate">
+                                <span className="truncate text-xs font-medium text-neutral-600">
                                     {item.expression}
                                 </span>
-                                <span className="text-neutral-400" aria-hidden="true">=</span>
-                                <span className="text-xl font-semibold text-neutral-800 pr-2 truncate">
+                                <span className="text-neutral-400" aria-hidden="true">
+                                    =
+                                </span>
+                                <span className="truncate text-xl font-semibold text-neutral-800">
                                     {item.result}
                                 </span>
                                 <Calculator className="h-5" aria-hidden="true" />
@@ -91,8 +96,6 @@ export default function History({ className, ...rest }: HistoryProps) {
                     ))
                 )}
             </ul>
-
-
-        </section>
+        </aside>
     );
 }
