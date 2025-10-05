@@ -3,7 +3,7 @@ import { Calculator } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCalculator } from "../context/expressionContext";
 
-interface HistoryProps extends React.ComponentProps<"aside"> {}
+interface HistoryProps extends React.ComponentProps<"aside"> { }
 
 export default function History({ className, ...rest }: HistoryProps) {
     const { history, setExpression } = useCalculator();
@@ -24,8 +24,8 @@ export default function History({ className, ...rest }: HistoryProps) {
         <aside
             aria-labelledby="history-title"
             className={clsx(
-                "flex flex-col gap-3 rounded-2xl border border-neutral-300/50 bg-neutral-200/80 p-4",
-                "shadow-lg backdrop-blur",
+                "flex flex-col max-h-4/12   rounded-2xl border border-neutral-300/50 bg-neutral-200/80 p-4",
+                "shadow-lg ",
                 className
             )}
             {...rest}
@@ -34,14 +34,15 @@ export default function History({ className, ...rest }: HistoryProps) {
                 <h2 id="history-title" className="text-lg font-semibold text-neutral-700">
                     History
                 </h2>
-                <span className="rounded-full bg-neutral-300/80 p-2 text-neutral-600" aria-hidden="true">
-                    <Calculator className="h-5 w-5" />
-                </span>
-            </div>
+                <button onClick={() => setIsOpen((v) => !v)} className="rounded-full bg-neutral-300/80 p-2 text-neutral-600">
 
+                    <Calculator className="h-5 w-5" />
+                </button>
+            </div>
+            {/* 
             <button
                 type="button"
-                onClick={() => setIsOpen((v) => !v)}
+                
                 className={clsx(
                     "flex w-full items-center justify-between rounded-xl border border-neutral-300/60",
                     "bg-white px-4 py-2 text-left text-sm font-medium text-neutral-700 shadow-sm",
@@ -53,16 +54,14 @@ export default function History({ className, ...rest }: HistoryProps) {
             >
                 <span>{isOpen ? "Hide history" : "Show history"}</span>
                 <span aria-hidden="true">{isOpen ? "−" : "+"}</span>
-            </button>
+            </button> */}
 
             <ul
                 id={listId}
                 className={clsx(
-                    "flex flex-col gap-2 overflow-hidden rounded-xl bg-neutral-100/80 p-0",
+                    "w-0 h-0 flex flex-col gap-2 overflow-hidden rounded-xl bg-neutral-100 p-0 inset-shadow-sm",
                     "transition-all duration-300 ease-in-out",
-                    isOpen
-                        ? "max-h-72 border border-neutral-200 p-2"
-                        : "max-h-0 border border-transparent"
+                    isOpen && "w-full h-full overflow-y-scroll  p-2 mt-2"
                 )}
                 aria-label="Lista de expressões salvas"
             >
