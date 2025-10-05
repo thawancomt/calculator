@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { addHistory, getHistory, type HistoryItem } from "../utils/localStorage"
-import { evaluate } from "mathjs"
+import { evaluate, log } from "mathjs"
 
 interface CalculatorContextValue {
     expression: string
@@ -22,21 +22,17 @@ const CalculatorContext = createContext<CalculatorContextValue | null>(null)
 export function CalculatorProvider({ children }: { children: ReactNode }) {
 
     const [expression, setExpression] = useState("")
-
-    const expressionRef = useRef(expression)
-
-    useEffect(() => {
-        expressionRef.current = expression
-    }, [expression])
-
     const [history, setHistory] = useState<HistoryItem[] | []>(getHistory())
+    const [error, setError] = useState<boolean>(false)
+
+
 
     const evaluateExpr = useCallback(() => {
         try {
 
-            const result = String(evaluate(expressionRef.current))
+            const result = String(evaluate(expression))
             addHistory({
-                expression: expressionRef.current,
+                expression: expression,
                 result: result
             })
 
@@ -48,11 +44,17 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
 
 
         } catch (error) {
+            setError(true)
             setExpression("Error")
         }
-    }, [expressionRef.current])
+    }, [expression])
 
-    const addParens = () => {
+    const addParens = useCallback(() => {
+
+        if (error) {
+            clearExpr()
+        }
+
         const opens = (expression.match(/\(/g) || []).length;
         const closes = (expression.match(/\)/g) || []).length;
         const last = expression.at(-1) ?? "";
@@ -70,40 +72,49 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
         } else {
             setExpression(prev => prev + "(");
         }
-    };
+    }, [error, expression]);
 
-    const addSignal = (value: string) => {
+    const addSignal = useCallback((value: string) => {
 
-        
-        const last = expressionRef.current.charAt(expressionRef.current.length - 1)
-        
+        if (error) {
+            clearExpr()
+        }
 
-        if (expressionRef.current === "" && value !== "-") return;
+        const last = expression.charAt(expression.length - 1)
 
-        if (/[+\-*/%]/.test(last)) {
 
+        if (expression === "" && value !== "-") return;
+
+        if (/[+\-*/%\\.]/.test(last)) {
             setExpression(prev => prev.slice(0, -1) + value)
         } else {
             setExpression(prev => prev + value)
         }
-    }
+    }, [error, expression])
 
-    const addDigit = (value: string) => {
+    const addDigit = useCallback((value: string) => {
+
+        if (error) {
+            clearExpr()
+        }
+
         setExpression(prev => prev + value)
-    }
+    }, [error, expression])
 
-    const clearExpr = () => {
-        setExpression("")
-    }
+    const clearExpr = useCallback(() => {
+        setExpression("");
+        setError(false);
+    }, []);
 
     // Keyboard mapping
     useEffect(() => {
 
         const eventListiner = (e: KeyboardEvent) => {
 
+            
 
             if (/\d/.test(e.key)) return addDigit(e.key)
-            if (/[+\-*/%]/.test(e.key)) return addSignal(e.key)
+            if (/[+\-*/%\\.]/.test(e.key)) return addSignal(e.key)
             if (e.key === "Escape") return clearExpr()
             if (e.key === "Backspace") return setExpression(prev => prev.slice(0, -1))
             if (e.key === "Enter") {
@@ -118,7 +129,7 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
 
         return () => window.removeEventListener("keydown", eventListiner)
 
-    }, [])
+    }, [expression])
 
     const value = useMemo<CalculatorContextValue>(() => ({
         expression, history, clearExpr, addDigit, addParens, addSignal, evaluateExpr, setExpression

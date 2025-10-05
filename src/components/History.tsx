@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Calculator } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useCalculator } from "../context/expressionContext";
+import { useCalculator } from "../context/CalculatorContext";
 
 interface HistoryProps extends React.ComponentProps<"aside"> { }
 
@@ -24,7 +24,7 @@ export default function History({ className, ...rest }: HistoryProps) {
         <aside
             aria-labelledby="history-title"
             className={clsx(
-                "flex flex-col max-h-4/12   rounded-2xl border border-neutral-300/50 bg-neutral-200/80 p-4",
+                "flex flex-col max-h-4/12 sm:max-h-full  rounded-2xl border border-neutral-300/50 bg-neutral-200/80 p-4",
                 "shadow-lg ",
                 className
             )}
@@ -36,7 +36,7 @@ export default function History({ className, ...rest }: HistoryProps) {
                 </h2>
                 <button onClick={() => setIsOpen((v) => !v)} className="rounded-full bg-neutral-300/80 p-2 text-neutral-600">
 
-                    <Calculator className="h-5 w-5" />
+                    <Calculator className="h-5 w-5 text-blue-400" />
                 </button>
             </div>
             {/* 
@@ -68,8 +68,8 @@ export default function History({ className, ...rest }: HistoryProps) {
                 {items.length === 0 ? (
                     <li className="px-2 py-2 text-sm text-neutral-600">Sem histórico ainda</li>
                 ) : (
-                    items.map((item) => (
-                        <li key={item.key}>
+                    items.map((item, idx) => (
+                        <li key={`${item.expression}-${idx}`}>
                             <button
                                 type="button"
                                 onClick={() => setExpression(item.expression)}

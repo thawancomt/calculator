@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useCalculator } from "../context/expressionContext";
+import { useCalculator } from "../context/CalculatorContext";
 
 interface DisplayProps extends React.ComponentProps<"header"> {}
 
