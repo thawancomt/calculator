@@ -1,6 +1,6 @@
 {
-  "name": "calculator",
-  "private": true,
+  "name": "calculator-online",
+  "private": false,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
