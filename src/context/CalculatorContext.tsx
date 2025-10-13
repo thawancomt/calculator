@@ -2,23 +2,37 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { addHistory, getHistory, type HistoryItem } from "../utils/localStorage"
 import { evaluate, log } from "mathjs"
 
+/**
+ * Public API exposed through the calculator context. The fields are grouped by
+ * the type of interaction they enable so consumers can easily discover the
+ * available helpers.
+ */
 interface CalculatorContextValue {
+    /** Current expression shown on the calculator display. */
     expression: string
+    /** Persisted history entries pulled from localStorage. */
     history: HistoryItem[]
+    /** Clears the current expression and resets any error flags. */
     clearExpr: () => void
 
-    // operators
+    /** Input helpers that mutate the expression by appending characters. */
     addDigit: (value: string) => void
     addSignal: (value: string) => void
     addParens: () => void
 
+    /** Evaluates the expression and updates state with the computed result. */
     evaluateExpr: () => void
+    /** Low-level setter in case a consumer needs direct access. */
     setExpression: React.Dispatch<React.SetStateAction<string>>
 }
 
 
 const CalculatorContext = createContext<CalculatorContextValue | null>(null)
 
+/**
+ * Provides calculator state management to the component tree, including input
+ * helpers, evaluation logic and persisted history synchronization.
+ */
 export function CalculatorProvider({ children }: { children: ReactNode }) {
 
     const [expression, setExpression] = useState("")
@@ -27,6 +41,7 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
 
 
 
+    /** Safely evaluates the current expression and stores the result in history. */
     const evaluateExpr = useCallback(() => {
         try {
 
@@ -49,6 +64,11 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
         }
     }, [expression])
 
+    /**
+     * Inserts parentheses while keeping the expression valid. When possible it
+     * closes an open pair, otherwise it decides whether to multiply before
+     * opening a new pair.
+     */
     const addParens = useCallback(() => {
 
         if (error) {
@@ -74,6 +94,7 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
         }
     }, [error, expression]);
 
+    /** Adds or replaces arithmetic operators while preventing invalid sequences. */
     const addSignal = useCallback((value: string) => {
 
         if (error) {
@@ -92,6 +113,7 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
         }
     }, [error, expression])
 
+    /** Appends digits (or decimal separators) to the expression. */
     const addDigit = useCallback((value: string) => {
 
         if (error) {
@@ -101,12 +123,13 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
         setExpression(prev => prev + value)
     }, [error, expression])
 
+    /** Removes all content from the expression and clears error state. */
     const clearExpr = useCallback(() => {
         setExpression("");
         setError(false);
     }, []);
 
-    // Keyboard mapping
+    // Map keyboard shortcuts to the same helpers used by the on-screen buttons.
     useEffect(() => {
 
         const eventListiner = (e: KeyboardEvent) => {
@@ -140,6 +163,7 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
     </CalculatorContext.Provider>
 
 }
+/** Convenience hook that guards against usage outside of the provider. */
 function useCalculator() {
     const ctx = useContext(CalculatorContext);
 
